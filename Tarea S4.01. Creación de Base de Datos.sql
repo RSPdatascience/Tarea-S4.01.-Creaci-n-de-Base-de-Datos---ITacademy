@@ -139,12 +139,40 @@ CREATE TABLE products_transactions (
     product_id INT
 ); 
 
-
+-- El csv siguiente se ha generado con python 
 LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/products_transactions.csv'
 INTO TABLE products_transactions
 FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS;
+
+
+-- Alternativa basada en código SQL:
+CREATE TABLE products_transactions_n (
+    transaction_id VARCHAR(255),
+    product_id INT
+) AS
+SELECT 
+    id AS transaction_id,
+    SUBSTRING_INDEX(product_ids, ',', 1) AS product_id
+FROM transactions
+UNION ALL
+SELECT 
+    id AS transaction_id,
+    SUBSTRING_INDEX(SUBSTRING_INDEX(product_ids, ',', 2), ',', -1) AS product_id
+FROM transactions
+UNION ALL
+SELECT 
+    id AS transaction_id,
+    SUBSTRING_INDEX(SUBSTRING_INDEX(product_ids, ',', 3), ',', -1) AS product_id
+FROM transactions
+UNION ALL
+SELECT 
+    id AS transaction_id,
+    SUBSTRING_INDEX(SUBSTRING_INDEX(product_ids, ',', 4), ',', -1) AS product_id
+FROM transactions;
+
+
 
 
 -- Se crean las claves foraneas 
